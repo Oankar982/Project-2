@@ -32,13 +32,30 @@ public class Client {
             }).start();
 
             // Handle user input
-            String userInput;
-            while ((userInput = stdIn.readLine()) != null) {
-                out.println(userInput);
+            do {
+                String userInput;
+                String post;
+                System.out.println("Subject:");
+                userInput = in.readLine();
+                post = userInput + "~";//store subject
+                
+                if (userInput.equalsIgnoreCase("exit"))
+                    break;
+
+                System.out.println("Message:");
+                userInput = in.readLine();
+                post += userInput;
+                // while ((userInput = stdIn.readLine()) != null) {
+                //     post += userInput;
+                //     break;
+                // }
+
                 if (userInput.equalsIgnoreCase("exit")) {
                     break;
                 }
-            }
+
+                out.println(post);
+            }while (true);
 
         } catch (IOException e) {
             e.printStackTrace();

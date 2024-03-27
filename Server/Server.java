@@ -1,10 +1,12 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import Classes.Post;
 
 public class Server {
     private static final int PORT = 12345;
     public static List<ClientHandler> clients = new ArrayList<>();
+    public static List<Post> messageList = new ArrayList<>();
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
