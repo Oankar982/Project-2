@@ -27,7 +27,6 @@ public class Client {
                         System.out.println(serverResponse);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }).start();
 
