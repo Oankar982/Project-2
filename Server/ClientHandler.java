@@ -5,6 +5,7 @@ public class ClientHandler extends Thread {
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
+    private String username;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -19,7 +20,7 @@ public class ClientHandler extends Thread {
     @Override
     public void run() {
         try {
-            String username = in.readLine();
+            username = in.readLine();
             System.out.println("New user joined: " + username);
 
             // Send list of users to the new user
@@ -52,6 +53,6 @@ public class ClientHandler extends Thread {
     }
 
     public String getUsername() {
-        return socket.getInetAddress().getHostName();
+        return username;
     }
 }
