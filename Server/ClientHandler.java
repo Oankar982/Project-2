@@ -30,15 +30,15 @@ public class ClientHandler extends Thread {
             }
             sendMessage("Users: " + userList.toString());
             
-            // if(Server.messageList.size() >= 2)
-            // {
-            //     out.println(Server.messageList.size() - 2);
-            //     out.println(Server.messageList.size() - 1);
-            // }
-            // else if(Server.messageList.size() == 1)
-            // {
-            //     out.println(Server.messageList.size() - 1);
-            // }
+            if(Server.messageList.size() >= 2)
+            {
+                out.println(Server.messageList.get(Server.messageList.size() - 2).toString());
+                out.println(Server.messageList.get(Server.messageList.size() - 1).toString());
+            }
+            else if(Server.messageList.size() == 1)
+            {
+                out.println(Server.messageList.get(Server.messageList.size() - 1).toString());
+            }
 
             // Notify other clients about the new user
             Server.broadcast(username + " joined the group.");
