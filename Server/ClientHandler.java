@@ -30,15 +30,15 @@ public class ClientHandler extends Thread {
             }
             sendMessage("Users: " + userList.toString());
             
-            if(Server.messageList.size() >= 2)
-            {
-                out.println(Server.messageList.size() - 2);
-                out.println(Server.messageList.size() - 1);
-            }
-            else if(Server.messageList.size() == 1)
-            {
-                out.println(Server.messageList.size() - 1);
-            }
+            // if(Server.messageList.size() >= 2)
+            // {
+            //     out.println(Server.messageList.size() - 2);
+            //     out.println(Server.messageList.size() - 1);
+            // }
+            // else if(Server.messageList.size() == 1)
+            // {
+            //     out.println(Server.messageList.size() - 1);
+            // }
 
             // Notify other clients about the new user
             Server.broadcast(username + " joined the group.");
@@ -51,6 +51,7 @@ public class ClientHandler extends Thread {
                 Post userPost = new Post(username, inputs[0], inputs[1]);
                 userPost.setId(Server.messageList.size());
                 Server.messageList.add(userPost);
+                Server.broadcast(userPost);
             }
 
             // Handle client leaving
@@ -64,6 +65,11 @@ public class ClientHandler extends Thread {
 
     public void sendMessage(String message) {
         out.println(message);
+    }
+
+    public void sendMessage(Post message)
+    {
+        out.println(message.toString());
     }
 
     public String getUsername() {

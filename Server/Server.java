@@ -31,6 +31,12 @@ public class Server {
         }
     }
 
+    public static void broadcast(Post message) {
+        for (ClientHandler client : clients) {
+            client.sendMessage(message);
+        }
+    }
+
     public static void removeClient(ClientHandler client) {
         clients.remove(client);
     }

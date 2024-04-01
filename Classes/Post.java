@@ -19,7 +19,7 @@ public class Post {
     }
 
     public String toString(){
-        return "Msg ID: " + msgId + "\n" + "Username: " + senderName + "\n" + "Date: " + postDate + "\n" + "Subject: " + msgSub + "\n" + "Message: " + msgParam + "\n";
+        return "-----\nMsg ID: " + msgId + "\n" + "Username: " + senderName + "\n" + "Date: " + postDate + "\n" + "Subject: " + msgSub + "\n" + "Message: " + msgParam + "\n-----";
     }
 
     public void setId(int id)
