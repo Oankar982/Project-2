@@ -31,22 +31,9 @@ public class Client {
             }).start();
             
             //Handle user input
-            String userInput, post = "";
+            String userInput;
             while ((userInput = stdIn.readLine()) != null) {
-                
-                if (userInput.equalsIgnoreCase("exit")) 
-                {
-                    break;
-                }
-                else if(post.contains("~"))
-                {
-                    out.println(post + userInput);
-                    post = "";
-                }
-                else
-                {
-                    post = userInput + "~";
-                }
+                out.println(userInput);
             }
 
         } catch (IOException e) {
