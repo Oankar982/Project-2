@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import Classes.Post;
 
 public class ClientHandler extends Thread {
     private Socket socket;
@@ -29,14 +30,29 @@ public class ClientHandler extends Thread {
                 userList.append(client.getUsername()).append(", ");
             }
             sendMessage("Users: " + userList.toString());
+            
+            if(Server.messageList.size() >= 2)
+            {
+                out.println(Server.messageList.get(Server.messageList.size() - 2).toString());
+                out.println(Server.messageList.get(Server.messageList.size() - 1).toString());
+            }
+            else if(Server.messageList.size() == 1)
+            {
+                out.println(Server.messageList.get(Server.messageList.size() - 1).toString());
+            }
 
             // Notify other clients about the new user
             Server.broadcast(username + " joined the group.");
 
             // Handle client messages
+            String[] inputs = new String[2];
             String message;
             while ((message = in.readLine()) != null) {
-                Server.broadcast(username + ": " + message);
+                inputs = message.split("~");
+                Post userPost = new Post(username, inputs[0], inputs[1]);
+                userPost.setId(Server.messageList.size());
+                Server.messageList.add(userPost);
+                Server.broadcast(userPost);
             }
 
             // Handle client leaving
@@ -50,6 +66,11 @@ public class ClientHandler extends Thread {
 
     public void sendMessage(String message) {
         out.println(message);
+    }
+
+    public void sendMessage(Post message)
+    {
+        out.println(message.toString());
     }
 
     public String getUsername() {
