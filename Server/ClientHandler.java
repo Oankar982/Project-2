@@ -64,7 +64,8 @@ public class ClientHandler extends Thread {
                         Server.removeClient(this);
                         Server.broadcast(username + " left the group.");
                         break;
-
+                    case "%message":
+                        out.println(getMessage(Integer.parseInt(message)).toString());
                 }
 
             }
@@ -88,5 +89,10 @@ public class ClientHandler extends Thread {
 
     public String getUsername() {
         return username;
+    }
+
+    private Post getMessage(int msgId)
+    {
+        return Server.messageList.get(msgId);
     }
 }
