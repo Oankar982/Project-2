@@ -30,14 +30,11 @@ public class ClientHandler extends Thread {
                 userList.append(client.getUsername()).append(", ");
             }
             sendMessage("Users: " + userList.toString());
-            
-            if(Server.messageList.size() >= 2)
-            {
+
+            if (Server.messageList.size() >= 2) {
                 out.println(Server.messageList.get(Server.messageList.size() - 2).toString());
                 out.println(Server.messageList.get(Server.messageList.size() - 1).toString());
-            }
-            else if(Server.messageList.size() == 1)
-            {
+            } else if (Server.messageList.size() == 1) {
                 out.println(Server.messageList.get(Server.messageList.size() - 1).toString());
             }
 
@@ -48,11 +45,29 @@ public class ClientHandler extends Thread {
             String[] inputs = new String[2];
             String message;
             while ((message = in.readLine()) != null) {
-                inputs = message.split("~");
-                Post userPost = new Post(username, inputs[0], inputs[1]);
-                userPost.setId(Server.messageList.size());
-                Server.messageList.add(userPost);
-                Server.broadcast(userPost);
+                String command = message.split("")[0];
+                message = message.replace(command, "");
+
+                switch (command) {
+                    case "%post":
+                        inputs = message.split("~");
+                        Post userPost = new Post(username, inputs[0], inputs[1]);
+                        userPost.setId(Server.messageList.size());
+                        Server.messageList.add(userPost);
+                        Server.broadcast(userPost);
+                        break;
+                    case "%users":
+                        sendMessage("Users: " + userList.toString());
+                        break;
+                    case "%exit":
+                        socket.close();
+                        Server.removeClient(this);
+                        Server.broadcast(username + " left the group.");
+                        break;
+                    case "%message":
+                        out.println(getMessage(Integer.parseInt(message)).toString());
+                }
+
             }
 
             // Handle client leaving
@@ -68,12 +83,16 @@ public class ClientHandler extends Thread {
         out.println(message);
     }
 
-    public void sendMessage(Post message)
-    {
+    public void sendMessage(Post message) {
         out.println(message.toString());
     }
 
     public String getUsername() {
         return username;
+    }
+
+    private Post getMessage(int msgId)
+    {
+        return Server.messageList.get(msgId);
     }
 }
