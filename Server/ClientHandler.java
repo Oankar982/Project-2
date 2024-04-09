@@ -51,7 +51,7 @@ public class ClientHandler extends Thread {
                     continue;
                 }
                 String command = message.split(" ")[0];
-                message = message.replace(command, "");
+                message = message.replace(command + " ", "");
 
                 switch (command) {
                     case "%post":
@@ -69,6 +69,8 @@ public class ClientHandler extends Thread {
                         Server.removeClient(this);
                         Server.broadcast(username + " left the group.", null);
                         break;
+                    case "%message":
+                        out.println(getMessage(Integer.parseInt(message)).toString());
                 }
             }
 
@@ -123,5 +125,8 @@ public class ClientHandler extends Thread {
             Server.groups.remove(group);
             group.getMembers().remove(this);
         }
+    private Post getMessage(int msgId)
+    {
+        return Server.messageList.get(msgId);
     }
 }
