@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+
 import java.util.*;
 import Classes.Post;
 
@@ -7,6 +8,7 @@ public class Server {
     private static final int PORT = 12345;
     public static List<ClientHandler> clients = new ArrayList<>();
     public static List<Post> messageList = new ArrayList<>();
+    public static List<MessageGroup> groups = new ArrayList<>(); // Added
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
@@ -31,8 +33,20 @@ public class Server {
         }
     }
 
+    public static void broadcast(String message, MessageGroup group) {
+        for (ClientHandler client : group.getMembers()) {
+            client.sendMessage(message);
+        }
+    }
+
     public static void broadcast(Post message) {
         for (ClientHandler client : clients) {
+            client.sendMessage(message);
+        }
+    }
+
+    public static void broadcast(Post message, MessageGroup group) {
+        for (ClientHandler client : group.getMembers()) {
             client.sendMessage(message);
         }
     }
@@ -41,3 +55,16 @@ public class Server {
         clients.remove(client);
     }
 }
+
+// class MessageGroup { // Added
+// private String id;
+// private String name;
+// private List<ClientHandler> members;
+
+// public List<ClientHandler> getMembers() { // Changed return type to
+// List<ClientHandler>
+// return members;
+// }
+
+// // constructor, getters, setters, and other methods...
+// }
