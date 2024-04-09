@@ -125,6 +125,7 @@ public class ClientHandler extends Thread {
             Server.groups.remove(group);
             group.getMembers().remove(this);
         }
+    }
     private Post getMessage(int msgId)
     {
         return Server.messageList.get(msgId);
