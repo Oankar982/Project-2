@@ -5,7 +5,6 @@ public class MessageGroup {
    private String id;
    private String name;
    private List<ClientHandler> members = new ArrayList<ClientHandler>();
-   private List<MessageGroup> clientGroups = new ArrayList<>();
 
    public synchronized List<ClientHandler> getMembers() {
       return this.members;

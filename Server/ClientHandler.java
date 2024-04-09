@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import Classes.Post;
@@ -9,6 +10,7 @@ public class ClientHandler extends Thread {
     private PrintWriter out;
     private BufferedReader in;
     private String username;
+   private List<MessageGroup> clientGroups = new ArrayList<>();
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
