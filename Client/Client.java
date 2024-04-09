@@ -1,17 +1,36 @@
 package Client;
 import java.io.*;
 import java.net.*;
+import javax.print.DocFlavor.SERVICE_FORMATTED;
 
 public class Client {
-    private static final String SERVER_ADDRESS = "localhost";
-    private static final int SERVER_PORT = 12345;
 
-    public static void main(String[] args) {
-        try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+    public static void main(String[] args){
+        //need initialized default vals
+        String serverAddy = "";
+        int serverPort = 0;
+        //buffered reader for fetching 
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.print("Please type '%connect' followed by server address and port: \n");
+        //fetch server address and port number from user input
+        try{
+            String serverInfo[] = stdIn.readLine().split(" ");
+            if(serverInfo[0].equals("%connect"))
+            {
+                serverAddy = serverInfo[1];
+                serverPort = Integer.parseInt(serverInfo[2]);
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try
+        {
+            Socket socket = new Socket(serverAddy, serverPort);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))) {
-
+            
             System.out.println("Connected to server.");
 
             // Prompt for username
