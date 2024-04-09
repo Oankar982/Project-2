@@ -13,7 +13,10 @@ public class Server {
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server started. Listening on port " + PORT);
-
+            for(int i = 0; i < 5; i++)
+            {
+                groups.add(new MessageGroup(i, "Group" + i));
+            }
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("New client connected: " + socket);

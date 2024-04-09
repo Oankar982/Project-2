@@ -2,9 +2,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageGroup {
-   private String id;
+   private int id;
    private String name;
    private List<ClientHandler> members = new ArrayList<ClientHandler>();
+
+   public MessageGroup(int id, String name)
+   {
+      this.id = id;
+      this.name = name;
+   }
 
    public synchronized List<ClientHandler> getMembers() {
       return this.members;
@@ -19,19 +25,16 @@ public class MessageGroup {
    }
 
    // Getters and setters for id and name
-   public String getId() {
+   public int getId() {
       return id;
-   }
-
-   public void setId(String id) {
-      this.id = id;
    }
 
    public String getName() {
       return name;
    }
 
-   public void setName(String name) {
-      this.name = name;
+   public String toString()
+   {
+      return "-----\nId: " + id + "\nName: " + name + "\n-----\n";
    }
 }
