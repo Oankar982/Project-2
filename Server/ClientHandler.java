@@ -46,7 +46,7 @@ public class ClientHandler extends Thread {
 
             // Handle client messages
             String[] inputs = new String[2];
-            String message;
+            String message, groupId;
             while ((message = in.readLine()) != null) {
                 if (message.isEmpty()) {
                     continue;
@@ -75,23 +75,37 @@ public class ClientHandler extends Thread {
                         break;
                     //group 2
                     case "%groups":
-                        
+                        for(MessageGroup group : Server.groups){
+                            out.println(group.toString());
+                        }
+                        break;
                     case "%groupusers":
-                        
+                        groupId = message.split(" ")[0];
+                        out.print(getGroup(groupId).getName() + "Users: ");
+                        for(ClientHandler client: getGroup(groupId).getMembers())
+                            out.println(client.username + ", ");
+                        break;
                     case "%groupjoin":
-
+                        groupId = message.split(" ")[0];
+                        getGroup(groupId).addMember(this);
+                        break;
                     case "%groupleave":
-
-                    case "%groupmessage":
-                        String groupId = message.split(" ")[0];
+                        groupId = message.split(" ")[0];
+                        getGroup(groupId).removeMember(this);
+                        break;
+                    case "%grouppost":
+                        groupId = message.split(" ")[0];
                         message = message.replace(groupId + " ", "");
                         inputs = message.split("~");
                         Post userGroupPost = new Post(username, inputs[0], inputs[1]);
                         userGroupPost.setId(Server.messageList.size());
                         Server.messageList.add(userGroupPost); //change to group messagelist
-                        //if(int.tryParse(groupId))
-                        Server.broadcast(userGroupPost, Server.groups.get(groupId));
+                        Server.broadcast(userGroupPost, getGroup(groupId));
                         break;
+                    default:
+                        out.println(command + " is not a valid command!");
+                    //case "%groupmessage":
+
                 }
             }
 
@@ -116,13 +130,11 @@ public class ClientHandler extends Thread {
                         return group;
 
                 }catch(NumberFormatException e){
-                    return null;
                 }
                 
             }
-
         }
-        return new MessageGroup();
+        return null;
     }
 
     public synchronized void sendMessage(String message) {
@@ -153,30 +165,6 @@ public class ClientHandler extends Thread {
 
     public String getUsername() {
         return username;
-    }
-
-    public synchronized void joinGroup(int id) { // Added
-        Server.groups.get(id).addMember(this);
-    }
-
-    public synchronized void joinGroup(String groupName) { // Added
-        for(MessageGroup group : Server.groups)
-        {
-            if(group.getName().equals(groupName))
-                group.addMember(this);
-        }
-    }
-
-    public synchronized void leaveGroup(int id) { // Added
-        Server.groups.get(id).removeMember(this);
-    }
-
-    public synchronized void leaveGroup(String groupName) { // Added
-        for(MessageGroup group : Server.groups)
-        {
-            if(group.getName().equals(groupName))
-                group.removeMember(this);
-        }
     }
 
     private Post getMessage(int msgId)
