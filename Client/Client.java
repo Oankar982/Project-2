@@ -13,16 +13,21 @@ public class Client {
 
         System.out.print("Please type '%connect' followed by server address and port: \n");
         //fetch server address and port number from user input
-        try{
-            String serverInfo[] = stdIn.readLine().split(" ");
-            if(serverInfo[0].equals("%connect"))
-            {
-                serverAddy = serverInfo[1];
-                serverPort = Integer.parseInt(serverInfo[2]);
+        do{
+            try{
+                String serverInfo[] = stdIn.readLine().split(" ");
+                if(serverInfo[0].equals("%connect"))
+                {
+                    serverAddy = serverInfo[1];
+                    serverPort = Integer.parseInt(serverInfo[2]);
+                }
+                else{
+                    System.out.println("please use %connect followed by address and port number");
+                }
+            }catch (Exception e) {
+                System.out.println("Please fix your command format.");
             }
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
+        }while(serverAddy.equals("") || serverPort == 0);
 
         try
         {
@@ -56,8 +61,8 @@ public class Client {
             }
 
             socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Please fix your command format.");
         }
     }
 }

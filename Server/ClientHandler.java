@@ -46,67 +46,130 @@ public class ClientHandler extends Thread {
 
             // Handle client messages
             String[] inputs = new String[2];
-            String message, groupId;
+            String message;
             while ((message = in.readLine()) != null) {
                 if (message.isEmpty()) {
                     continue;
                 }
                 String command = message.split(" ")[0];
                 message = message.replace(command + " ", "");
+                String groupId = "";
 
-                switch (command) {
-                    case "%post":
-                        inputs = message.split("~");
-                        Post userPost = new Post(username, inputs[0], inputs[1]);
-                        userPost.setId(Server.messageList.size());
-                        Server.messageList.add(userPost);
-                        Server.broadcast(userPost);
-                        break;
-                    case "%users":
-                        sendMessage("Users: " + userList.toString());
-                        break;
-                    case "%exit":
-                        socket.close();
-                        Server.removeClient(this);
-                        Server.broadcast(username + " left the server.");
-                        break;
-                    case "%message":
-                        out.println(getMessage(Integer.parseInt(message)).toString());
-                        break;
-                    //group 2
-                    case "%groups":
-                        for(MessageGroup group : Server.groups){
-                            out.println(group.toString());
+                if(command.contains("group")) //Commands that have a groupId/name
+                {
+                    try{
+                        if(!command.equals("%groups"))
+                        {
+                            groupId = message.split(" ")[0];
+                            if(groupId.contains("~"))
+                                throw new ArrayIndexOutOfBoundsException("Missing GroupId");
                         }
+                    }
+                    catch(ArrayIndexOutOfBoundsException e)
+                    {
+                        e.printStackTrace();
                         break;
-                    case "%groupusers":
-                        groupId = message.split(" ")[0];
-                        out.print(getGroup(groupId).getName() + "Users: ");
-                        for(ClientHandler client: getGroup(groupId).getMembers())
-                            out.println(client.username + ", ");
-                        break;
-                    case "%groupjoin":
-                        groupId = message.split(" ")[0];
-                        getGroup(groupId).addMember(this);
-                        break;
-                    case "%groupleave":
-                        groupId = message.split(" ")[0];
-                        getGroup(groupId).removeMember(this);
-                        break;
-                    case "%grouppost":
-                        groupId = message.split(" ")[0];
-                        message = message.replace(groupId + " ", "");
-                        inputs = message.split("~");
-                        Post userGroupPost = new Post(username, inputs[0], inputs[1]);
-                        userGroupPost.setId(Server.messageList.size());
-                        Server.messageList.add(userGroupPost); //change to group messagelist
-                        Server.broadcast(userGroupPost, getGroup(groupId));
-                        break;
-                    default:
-                        out.println(command + " is not a valid command!");
-                    //case "%groupmessage":
-
+                    }
+                    switch (command) {
+                        case "%groupusers":
+                            out.print(getGroup(groupId).getName() + "Users: ");
+                            for(ClientHandler client: getGroup(groupId).getMembers())
+                                out.println(client.username + ", ");
+                            break;
+                        case "%groupjoin":
+                            getGroup(groupId).addMember(this);
+                            break;
+                        case "%groupleave":
+                            getGroup(groupId).removeMember(this);
+                            break;
+                        case "%grouppost":
+                            if(!message.contains("~")){
+                                out.println("Please use the correct ~ post format");
+                            }
+                            else{
+                                message = message.replace(groupId + " ", "");
+                                inputs = message.split("~");
+                                Post userGroupPost = new Post(username, inputs[0], inputs[1]);
+                                userGroupPost.setGroupId(getGroup(groupId).getId());
+                                userGroupPost.setId(getGroup(groupId).messages.size());
+                                getGroup(groupId).messages.add(userGroupPost);
+                                Server.broadcast(userGroupPost, getGroup(groupId));
+                            }
+                            break;
+                        case "%groups":
+                            if(message.equals("") || message.equals("%groups")){
+                                for(MessageGroup group : Server.groups){
+                                    out.println(group.toString());
+                                }
+                            }
+                            else
+                                out.println("%groups is a stand alone command not followed by anything");
+                            break;
+                        default:
+                            out.println(command + " is not a valid command!");
+                        case "%groupmessage":
+                        if(message.contains(".")){
+                            message = message.replace(groupId + " ", "");
+                            inputs = message.split(".");
+                            try{
+                                out.println(getGroup(inputs[0]).getMessage(Integer.parseInt(inputs[1])).toString());
+                            }
+                            catch(NumberFormatException e)
+                            {
+                                out.println("Please use a number for the Message Id.");
+                            }
+                        }
+                        else
+                        {
+                            out.println("Please use the proper formatting for %groupmessage.");
+                        }
+                            break;
+    
+                    }
                 }
+                else //commands that don't have a groupId/name
+                {
+                    switch (command) {
+                        case "%post":
+                            if(!message.contains("~")){
+                                out.println("Please use the correct ~ post format");
+                            }
+                            else{
+                                inputs = message.split("~");
+                                Post userPost = new Post(username, inputs[0], inputs[1]);
+                                userPost.setId(Server.messageList.size());
+                                Server.messageList.add(userPost);
+                                Server.broadcast(userPost);
+                            }
+                            break;
+                        case "%users":
+                            if(message.equals(""))
+                                sendMessage("Users: " + userList.toString());
+                            else
+                                out.println("%users is a stand alone command followed by nothing");
+                            break;
+                        case "%exit":
+                            if(message.equals("")){
+                                socket.close();
+                                Server.removeClient(this);
+                                Server.broadcast(username + " left the server.");
+                            }
+                            else
+                                out.println("%exit is a stand alone command followed by nothing");
+                            break;
+                        case "%message":
+                            try{
+                                out.println(getMessage(Integer.parseInt(message)).toString());
+                            }catch(NumberFormatException e){
+                                out.println("Message ID was not an int");
+                            }
+                            
+                            break;
+                        default:
+                            out.println(command + " is not a valid command!");
+                    }
+                }
+                
             }
 
             // Handle client leaving
