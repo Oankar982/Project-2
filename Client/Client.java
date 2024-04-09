@@ -27,6 +27,7 @@ public class Client {
                         System.out.println(serverResponse);
                     }
                 } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }).start();
             
@@ -42,6 +43,9 @@ public class Client {
                 {
                     out.println(post + userInput);
                     post = "";
+                }else if (userInput.startsWith("leave ")) {
+                    String groupId = userInput.split(" ")[1];
+                    out.println("%leave " + groupId);
                 }
                 else
                 {

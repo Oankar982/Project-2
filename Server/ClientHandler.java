@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.*;
+import java.util.List;
+
 import Classes.Post;
 
 public class ClientHandler extends Thread {
@@ -45,7 +47,10 @@ public class ClientHandler extends Thread {
             String[] inputs = new String[2];
             String message;
             while ((message = in.readLine()) != null) {
-                String command = message.split("")[0];
+                if (message.isEmpty()) {
+                    continue;
+                }
+                String command = message.split(" ")[0];
                 message = message.replace(command, "");
 
                 switch (command) {
@@ -54,7 +59,7 @@ public class ClientHandler extends Thread {
                         Post userPost = new Post(username, inputs[0], inputs[1]);
                         userPost.setId(Server.messageList.size());
                         Server.messageList.add(userPost);
-                        Server.broadcast(userPost);
+                        Server.broadcast(userPost, null);
                         break;
                     case "%users":
                         sendMessage("Users: " + userList.toString());
@@ -62,31 +67,61 @@ public class ClientHandler extends Thread {
                     case "%exit":
                         socket.close();
                         Server.removeClient(this);
-                        Server.broadcast(username + " left the group.");
+                        Server.broadcast(username + " left the group.", null);
                         break;
-
                 }
-
             }
 
             // Handle client leaving
             socket.close();
             Server.removeClient(this);
-            Server.broadcast(username + " left the group.");
+            Server.broadcast(username + " left the group.", null);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void sendMessage(String message) {
+    public synchronized void sendMessage(String message) {
         out.println(message);
     }
 
-    public void sendMessage(Post message) {
+    public synchronized void sendMessage(String message, List<MessageGroup> groups)
+    {
+        for (MessageGroup group : groups) {
+            if (group.getMembers().contains(this)) {
+                sendMessage(message.toString());
+            }
+        }
+    }
+
+    public synchronized void sendMessage(Post message)
+    {
         out.println(message.toString());
+    }
+
+    public synchronized void sendMessage(Post message, List<MessageGroup> groups) {
+        for (MessageGroup group : groups) {
+            if (group.getMembers().contains(this)) {
+                sendMessage(message);
+            }
+        }
     }
 
     public String getUsername() {
         return username;
+    }
+
+    public synchronized void joinGroup(MessageGroup group) { // Added
+        if (!Server.groups.contains(group)) {
+            Server.groups.add(group);
+            group.getMembers().add(this);
+        }
+    }
+
+    public synchronized void leaveGroup(MessageGroup group) { // Added
+        if (Server.groups.contains(group)) {
+            Server.groups.remove(group);
+            group.getMembers().remove(this);
+        }
     }
 }
