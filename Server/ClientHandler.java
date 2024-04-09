@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import Classes.Post;
@@ -71,6 +72,26 @@ public class ClientHandler extends Thread {
                         break;
                     case "%message":
                         out.println(getMessage(Integer.parseInt(message)).toString());
+                        break;
+                    //group 2
+                    case "%groups":
+                        
+                    case "%groupusers":
+                        
+                    case "%groupjoin":
+
+                    case "%groupleave":
+
+                    case "%groupmessage":
+                        String groupId = message.split(" ")[0];
+                        message = message.replace(groupId + " ", "");
+                        inputs = message.split("~");
+                        Post userGroupPost = new Post(username, inputs[0], inputs[1]);
+                        userGroupPost.setId(Server.messageList.size());
+                        Server.messageList.add(userGroupPost); //change to group messagelist
+                        //if(int.tryParse(groupId))
+                        Server.broadcast(userGroupPost, Server.groups.get(groupId));
+                        break;
                 }
             }
 
@@ -81,6 +102,27 @@ public class ClientHandler extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private MessageGroup getGroup(String groupName)
+    {
+        for (MessageGroup group : Server.groups){
+            if (group.getName().equals(groupName)){
+                return group;
+            }
+            else{
+                try{
+                    if(Integer.parseInt(groupName) == group.getId())
+                        return group;
+
+                }catch(NumberFormatException e){
+                    return null;
+                }
+                
+            }
+
+        }
+        return new MessageGroup();
     }
 
     public synchronized void sendMessage(String message) {
