@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import Classes.Post;
@@ -10,7 +9,6 @@ public class ClientHandler extends Thread {
     private PrintWriter out;
     private BufferedReader in;
     private String username;
-   private List<MessageGroup> clientGroups = new ArrayList<>();
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -43,7 +41,7 @@ public class ClientHandler extends Thread {
             }
 
             // Notify other clients about the new user
-            Server.broadcast(username + " joined the group.");
+            Server.broadcast(username + " joined the server.");
 
             // Handle client messages
             String[] inputs = new String[2];
@@ -61,7 +59,7 @@ public class ClientHandler extends Thread {
                         Post userPost = new Post(username, inputs[0], inputs[1]);
                         userPost.setId(Server.messageList.size());
                         Server.messageList.add(userPost);
-                        Server.broadcast(userPost, null);
+                        Server.broadcast(userPost);
                         break;
                     case "%users":
                         sendMessage("Users: " + userList.toString());
@@ -69,7 +67,7 @@ public class ClientHandler extends Thread {
                     case "%exit":
                         socket.close();
                         Server.removeClient(this);
-                        Server.broadcast(username + " left the group.", null);
+                        Server.broadcast(username + " left the server.");
                         break;
                     case "%message":
                         out.println(getMessage(Integer.parseInt(message)).toString());
@@ -115,19 +113,30 @@ public class ClientHandler extends Thread {
         return username;
     }
 
-    public synchronized void joinGroup(MessageGroup group) { // Added
-        if (!Server.groups.contains(group)) {
-            Server.groups.add(group);
-            group.getMembers().add(this);
+    public synchronized void joinGroup(int id) { // Added
+        Server.groups.get(id).addMember(this);
+    }
+
+    public synchronized void joinGroup(String groupName) { // Added
+        for(MessageGroup group : Server.groups)
+        {
+            if(group.getName().equals(groupName))
+                group.addMember(this);
         }
     }
 
-    public synchronized void leaveGroup(MessageGroup group) { // Added
-        if (Server.groups.contains(group)) {
-            Server.groups.remove(group);
-            group.getMembers().remove(this);
+    public synchronized void leaveGroup(int id) { // Added
+        Server.groups.get(id).removeMember(this);
+    }
+
+    public synchronized void leaveGroup(String groupName) { // Added
+        for(MessageGroup group : Server.groups)
+        {
+            if(group.getName().equals(groupName))
+                group.removeMember(this);
         }
     }
+
     private Post getMessage(int msgId)
     {
         return Server.messageList.get(msgId);
