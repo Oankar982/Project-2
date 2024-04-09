@@ -1,7 +1,6 @@
 package Client;
 import java.io.*;
 import java.net.*;
-import javax.print.DocFlavor.SERVICE_FORMATTED;
 
 public class Client {
 
@@ -56,6 +55,7 @@ public class Client {
                 out.println(userInput);
             }
 
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
