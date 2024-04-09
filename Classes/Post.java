@@ -9,6 +9,7 @@ public class Post {
     private String postDate; //date time
     private String msgSub; //message Subject 
     private String msgParam;
+    private String groupName; //when a user does %groupPost <name> we should assign the name to groupName here. 
     
     public Post(String senderName, String msgSub, String msgParam) {
         this.senderName = senderName;

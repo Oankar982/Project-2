@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import Classes.Post;
+import Classes.Group;
 
 public class ClientHandler extends Thread {
     private Socket socket;
@@ -66,6 +67,16 @@ public class ClientHandler extends Thread {
                         break;
                     case "%message":
                         out.println(getMessage(Integer.parseInt(message)).toString());
+                    //chris' part 2
+                    case "%groupjoin":
+                        Group userGroup = new Group(List<String> groupName);
+                        groupName.addUser(username);
+                    
+                    case "%groupleave":
+                        groupName.removeUser(username);
+                    
+                    case "groupmessage":
+                        //broadcast message to everyone in the groupUser list.
                 }
 
             }

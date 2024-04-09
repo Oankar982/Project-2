@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import Classes.Post;
+import Classes.Group;
 
 public class Server {
     private static final int PORT = 12345;
