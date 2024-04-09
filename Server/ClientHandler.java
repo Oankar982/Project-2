@@ -45,8 +45,8 @@ public class ClientHandler extends Thread {
             String[] inputs = new String[2];
             String message;
             while ((message = in.readLine()) != null) {
-                String command = message.split("")[0];
-                message = message.replace(command, "");
+                String command = message.split(" ")[0];
+                message = message.replace(command + " ", "");
 
                 switch (command) {
                     case "%post":
