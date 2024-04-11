@@ -19,13 +19,13 @@ public class MessageGroup {
    }
 
    public synchronized void addMember(ClientHandler member) {
-      this.members.add(member);
       Server.broadcast(member.getUsername() + " joined " + name, this);
+      this.members.add(member);
    }
 
    public synchronized void removeMember(ClientHandler member) {
-      this.members.remove(member);
       Server.broadcast(member.getUsername() + " left " + name, this);
+      this.members.remove(member);
    }
 
    public Post getMessage(int msgId)

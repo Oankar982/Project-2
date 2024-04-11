@@ -105,12 +105,10 @@ public class ClientHandler extends Thread {
                             else
                                 out.println("%groups is a stand alone command not followed by anything");
                             break;
-                        default:
-                            out.println(command + " is not a valid command!");
-                        case "%groupmessage":
+                            case "%groupmessage":
                         if(message.contains(".")){
                             message = message.replace(groupId + " ", "");
-                            inputs = message.split(".");
+                            inputs = message.split("\\.");
                             try{
                                 out.println(getGroup(inputs[0]).getMessage(Integer.parseInt(inputs[1])).toString());
                             }
@@ -124,6 +122,9 @@ public class ClientHandler extends Thread {
                             out.println("Please use the proper formatting for %groupmessage.");
                         }
                             break;
+                        default:
+                            out.println(command + " is not a valid command!");
+                        
     
                     }
                 }
