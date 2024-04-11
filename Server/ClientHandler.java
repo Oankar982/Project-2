@@ -33,6 +33,9 @@ public class ClientHandler extends Thread {
                 userList.append(client.getUsername()).append(", ");
             }
             sendMessage("Users: " + userList.toString());
+            for(MessageGroup group : Server.groups){
+                sendMessage(group.toString());
+            }
 
             if (Server.messageList.size() >= 2) {
                 out.println(Server.messageList.get(Server.messageList.size() - 2).toString());
